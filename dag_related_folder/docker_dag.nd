@@ -1,0 +1,48 @@
+            ┌────────────────────────────┐
+            │ FROM python:3.10-slim      │
+            │ Base image with Python     │
+            └────────────┬───────────────┘
+                         │
+                         ▼
+            ┌────────────────────────────┐
+            │ WORKDIR /app               │
+            │ Set working directory      │
+            └────────────┬───────────────┘
+                         │
+                         ▼
+            ┌────────────────────────────┐
+            │ COPY flask_app/ /app/      │
+            │ Copy app code              │
+            └────────────┬───────────────┘
+                         │
+                         ▼
+            ┌─────────────────────────────────────────────┐
+            │ COPY models/vectorizer.pkl /app/models/      │
+            │ Copy vectorizer for model predictions         │
+            └────────────┬──────────────────────────────────┘
+                         │
+                         ▼
+            ┌────────────────────────────┐
+            │ RUN pip install -r         │
+            │ requirements.txt           │
+            │ Install dependencies       │
+            └────────────┬───────────────┘
+                         │
+                         ▼
+            ┌──────────────────────────────────────────────┐
+            │ RUN python -m nltk.downloader stopwords wordnet │
+            │ Download NLTK resources                          │
+            └────────────┬───────────────────────────────────┘
+                         │
+                         ▼
+            ┌────────────────────────────┐
+            │ EXPOSE 5000                │
+            │ Expose port for Flask      │
+            └────────────┬───────────────┘
+                         │
+                         ▼
+            ┌───────────────────────────────────────────────┐
+            │ CMD ["gunicorn", "--bind", "0.0.0.0:5000",     │
+            │ "--timeout", "120", "app:app"]                 │
+            │ Start Flask app with Gunicorn                  │
+            └────────────────────────────────────────────────┘
